@@ -4,6 +4,7 @@ package com.bjpowernode.domain;
  * @author Ryuzu
  * @date 2022/1/12 13:35
  */
+
 public class Student {
     private Integer id;
     private String name;
