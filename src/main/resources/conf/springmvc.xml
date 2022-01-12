@@ -13,7 +13,7 @@
     </bean>
 
 
-    <!--注册驱动(注意:结尾是mvc的)-->
+    <!--注册驱动(注意:结尾是mvc的)响应json-->
     <mvc:annotation-driven/>
 
 </beans>

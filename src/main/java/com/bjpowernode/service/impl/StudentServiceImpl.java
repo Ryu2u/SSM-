@@ -19,10 +19,12 @@ public class StudentServiceImpl implements StudentService {
     @Resource
     private StudentDao dao = null;
 
-    @Transactional
+
     @Override
     public int addStudent(Student student) {
         int count = dao.insertStudent(student);
+        //测试事务是否添加成功
+        //int i = 1/0;
         return count;
     }
 

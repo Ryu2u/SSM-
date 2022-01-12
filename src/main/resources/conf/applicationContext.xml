@@ -34,7 +34,7 @@
     <!--声明事物的advice-->
     <tx:advice id="myAdvice" transaction-manager="transaction">
         <tx:attributes>
-            <tx:method name="add*"/>
+            <tx:method name="add*" />
         </tx:attributes>
     </tx:advice>
     <!--声明切入点表达式-->

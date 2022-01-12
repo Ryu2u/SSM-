@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
     <context:property-placeholder location="classpath:conf/jdbc.properties"/>
     <!--配置德鲁伊数据库连接池(注意: 连接池有两个参数需要配置init-method 和 destroy-method)-->
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
@@ -16,12 +17,30 @@
         <property name="dataSource" ref="dataSource"/>
         <property name="configLocation" value="classpath:conf/mybatis.xml"/>
     </bean>
-
+    <!--声明mybatis的扫描器,创建dao对象-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
         <property name="basePackage" value="com.bjpowernode.dao"/>
     </bean>
 
-    <!-- 声明service的注解扫描驱动的位置-->
+    <!-- 声明service的注解扫描驱动的位置,包名-->
     <context:component-scan base-package="com.bjpowernode.service"/>
+
+    <!--声明事务管理器-->
+    <bean id="transaction" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--声明事物的advice-->
+    <tx:advice id="myAdvice" transaction-manager="transaction">
+        <tx:attributes>
+            <tx:method name="add*" />
+        </tx:attributes>
+    </tx:advice>
+    <!--声明切入点表达式-->
+    <aop:config>
+        <aop:pointcut id="servicePt" expression="execution(* *..service..*.*(..))"/>
+        <!--配置增强器,关联advice和pointcut-->
+        <aop:advisor advice-ref="myAdvice" pointcut-ref="servicePt"/>
+    </aop:config>
 </beans>
